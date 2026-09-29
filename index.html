@@ -1,48 +1,645 @@
-<!--  ----------------------------------------------------------------------  -->
-<!--  NOTE: Please add the following <META> element to your page <HEAD>.      -->
-<!--  If necessary, please modify the charset parameter to specify the        -->
-<!--  character set of your HTML page.                                        -->
-<!--  ----------------------------------------------------------------------  -->
+```html
+<!DOCTYPE html>
+<html lang="en">
 
-<META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
-<script src="https://www.google.com/recaptcha/api.js"></script>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Contact Us</title>
+
+    <!-- =========================================================
+         GOOGLE reCAPTCHA
+         ========================================================= -->
+    <script src="https://www.google.com/recaptcha/api.js"></script>
+
+    <!-- Salesforce reCAPTCHA timestamp -->
+    <script>
+        function timestamp() {
+
+            var response =
+                document.getElementById("g-recaptcha-response");
+
+            if (
+                response == null ||
+                response.value.trim() == ""
+            ) {
+
+                var elems = JSON.parse(
+                    document.getElementsByName(
+                        "captcha_settings"
+                    )[0].value
+                );
+
+                elems["ts"] =
+                    JSON.stringify(new Date().getTime());
+
+                document.getElementsByName(
+                    "captcha_settings"
+                )[0].value =
+                    JSON.stringify(elems);
+            }
+        }
+
+        setInterval(timestamp, 500);
+    </script>
+
+
+    <!-- =========================================================
+         CSS
+         ========================================================= -->
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 40px 20px;
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+        }
+
+        .form-container {
+            max-width: 550px;
+            margin: auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #16325c;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: bold;
+            color: #333333;
+        }
+
+        .required {
+            color: red;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"] {
+
+            width: 100%;
+            padding: 11px;
+
+            border: 1px solid #cccccc;
+            border-radius: 5px;
+
+            font-size: 15px;
+        }
+
+        input:focus {
+
+            outline: none;
+            border-color: #0176d3;
+
+            box-shadow:
+                0 0 3px rgba(1, 118, 211, 0.5);
+        }
+
+        .error {
+
+            color: #c23934;
+            font-size: 13px;
+
+            margin-top: 5px;
+            display: none;
+        }
+
+        .captcha {
+
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .submit-button {
+
+            width: 100%;
+
+            padding: 13px;
+
+            background: #0176d3;
+            color: white;
+
+            border: none;
+            border-radius: 5px;
+
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .submit-button:hover {
+
+            background: #014486;
+        }
+
+        .required-note {
+
+            font-size: 13px;
+            color: #666666;
+
+            margin-bottom: 20px;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="form-container">
+
+    <h1>Contact Us</h1>
+
+    <div class="required-note">
+        <span class="required">*</span>
+        Required fields
+    </div>
+
+
+    <!-- =========================================================
+         SALESFORCE WEB-TO-LEAD FORM
+         ========================================================= -->
+
+    <form
+        id="leadForm"
+        action="https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&amp;orgId=00Dg800000GVUzt"
+        method="POST"
+        onsubmit="return validateForm();">
+
+
+        <!-- =====================================================
+             SALESFORCE REQUIRED HIDDEN FIELDS
+             ===================================================== -->
+
+        <input
+            type="hidden"
+            name="captcha_settings"
+            value='{"keyname":"webLead","fallback":"true","orgId":"00Dg800000GVUzt","ts":""}">
+
+
+        <input
+            type="hidden"
+            name="oid"
+            value="00Dg800000GVUzt">
+
+
+        <!-- Redirect after successful submission -->
+        <input
+            type="hidden"
+            name="retURL"
+            value="https://YOUR_USERNAME.github.io/YOUR_REPOSITORY/thank-you.html">
+
+
+        <!-- =====================================================
+             LEAD SOURCE
+             ===================================================== -->
+
+        <input
+            type="hidden"
+            id="lead_source"
+            name="lead_source"
+            value="Web">
+
+
+        <!-- =====================================================
+             FIRST NAME
+             ===================================================== -->
+
+        <div class="form-group">
+
+            <label for="first_name">
+                First Name
+                <span class="required">*</span>
+            </label>
+
+            <input
+                id="first_name"
+                name="first_name"
+                type="text"
+                maxlength="40"
+                required
+                pattern="[A-Za-zÀ-ÿ ]+"
+                title="Please enter a valid first name.">
+
+            <div
+                id="firstNameError"
+                class="error">
+                Please enter a valid first name.
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             LAST NAME
+             ===================================================== -->
+
+        <div class="form-group">
+
+            <label for="last_name">
+                Last Name
+                <span class="required">*</span>
+            </label>
+
+            <input
+                id="last_name"
+                name="last_name"
+                type="text"
+                maxlength="80"
+                required
+                pattern="[A-Za-zÀ-ÿ ]+"
+                title="Please enter a valid last name.">
+
+            <div
+                id="lastNameError"
+                class="error">
+                Please enter a valid last name.
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             EMAIL
+             ===================================================== -->
+
+        <div class="form-group">
+
+            <label for="email">
+                Email
+                <span class="required">*</span>
+            </label>
+
+            <input
+                id="email"
+                name="email"
+                type="email"
+                maxlength="80"
+                required
+                placeholder="example@company.com">
+
+            <div
+                id="emailError"
+                class="error">
+                Please enter a valid email address.
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             COMPANY
+             ===================================================== -->
+
+        <div class="form-group">
+
+            <label for="company">
+                Company
+                <span class="required">*</span>
+            </label>
+
+            <input
+                id="company"
+                name="company"
+                type="text"
+                maxlength="40"
+                required
+                placeholder="Company Name">
+
+            <div
+                id="companyError"
+                class="error">
+                Company name is required.
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             PHONE
+             ===================================================== -->
+
+        <div class="form-group">
+
+            <label for="phone">
+                Phone
+            </label>
+
+            <input
+                id="phone"
+                name="phone"
+                type="tel"
+                maxlength="20"
+                pattern="[0-9+() -]{7,20}"
+                placeholder="+91 9876543210">
+
+            <div
+                id="phoneError"
+                class="error">
+                Please enter a valid phone number.
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             CITY
+             ===================================================== -->
+
+        <div class="form-group">
+
+            <label for="city">
+                City
+                <span class="required">*</span>
+            </label>
+
+            <input
+                id="city"
+                name="city"
+                type="text"
+                maxlength="40"
+                required
+                placeholder="City">
+
+            <div
+                id="cityError"
+                class="error">
+                City is required.
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             STATE
+             ===================================================== -->
+
+        <div class="form-group">
+
+            <label for="state">
+                State / Province
+                <span class="required">*</span>
+            </label>
+
+            <input
+                id="state"
+                name="state"
+                type="text"
+                maxlength="20"
+                required
+                placeholder="State">
+
+            <div
+                id="stateError"
+                class="error">
+                State is required.
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             GOOGLE reCAPTCHA
+             ===================================================== -->
+
+        <div class="captcha">
+
+            <div
+                class="g-recaptcha"
+                data-sitekey="6LeCzNUtAAAAANdAlINCCSGZ99uTNqlMvA5Ufawk">
+            </div>
+
+            <div
+                id="captchaError"
+                class="error">
+                Please complete the reCAPTCHA verification.
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             SUBMIT
+             ===================================================== -->
+
+        <input
+            type="submit"
+            name="submit"
+            value="Submit"
+            class="submit-button">
+
+    </form>
+
+</div>
+
+
+<!-- =============================================================
+     JAVASCRIPT VALIDATION
+     ============================================================= -->
+
 <script>
- function timestamp() { var response = document.getElementById("g-recaptcha-response"); if (response == null || response.value.trim() == "") {var elems = JSON.parse(document.getElementsByName("captcha_settings")[0].value);elems["ts"] = JSON.stringify(new Date().getTime());document.getElementsByName("captcha_settings")[0].value = JSON.stringify(elems); } } setInterval(timestamp, 500); 
+
+function validateForm() {
+
+    var isValid = true;
+
+
+    /*
+     * Get values
+     */
+
+    var firstName =
+        document.getElementById("first_name").value.trim();
+
+    var lastName =
+        document.getElementById("last_name").value.trim();
+
+    var email =
+        document.getElementById("email").value.trim();
+
+    var company =
+        document.getElementById("company").value.trim();
+
+    var phone =
+        document.getElementById("phone").value.trim();
+
+    var city =
+        document.getElementById("city").value.trim();
+
+    var state =
+        document.getElementById("state").value.trim();
+
+
+    /*
+     * Hide all errors
+     */
+
+    var errors =
+        document.querySelectorAll(".error");
+
+    errors.forEach(function(error) {
+        error.style.display = "none";
+    });
+
+
+    /*
+     * Name validation
+     */
+
+    var namePattern =
+        /^[A-Za-zÀ-ÿ ]+$/;
+
+
+    if (
+        firstName === "" ||
+        !namePattern.test(firstName)
+    ) {
+
+        document.getElementById(
+            "firstNameError"
+        ).style.display = "block";
+
+        isValid = false;
+    }
+
+
+    if (
+        lastName === "" ||
+        !namePattern.test(lastName)
+    ) {
+
+        document.getElementById(
+            "lastNameError"
+        ).style.display = "block";
+
+        isValid = false;
+    }
+
+
+    /*
+     * Email validation
+     */
+
+    var emailPattern =
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+
+    if (
+        email === "" ||
+        !emailPattern.test(email)
+    ) {
+
+        document.getElementById(
+            "emailError"
+        ).style.display = "block";
+
+        isValid = false;
+    }
+
+
+    /*
+     * Company validation
+     */
+
+    if (company === "") {
+
+        document.getElementById(
+            "companyError"
+        ).style.display = "block";
+
+        isValid = false;
+    }
+
+
+    /*
+     * Phone validation
+     */
+
+    if (phone !== "") {
+
+        var phonePattern =
+            /^[0-9+() -]{7,20}$/;
+
+        if (!phonePattern.test(phone)) {
+
+            document.getElementById(
+                "phoneError"
+            ).style.display = "block";
+
+            isValid = false;
+        }
+    }
+
+
+    /*
+     * City validation
+     */
+
+    if (city === "") {
+
+        document.getElementById(
+            "cityError"
+        ).style.display = "block";
+
+        isValid = false;
+    }
+
+
+    /*
+     * State validation
+     */
+
+    if (state === "") {
+
+        document.getElementById(
+            "stateError"
+        ).style.display = "block";
+
+        isValid = false;
+    }
+
+
+    /*
+     * reCAPTCHA validation
+     */
+
+    var captchaResponse =
+        grecaptcha.getResponse();
+
+
+    if (captchaResponse.length === 0) {
+
+        document.getElementById(
+            "captchaError"
+        ).style.display = "block";
+
+        isValid = false;
+    }
+
+
+    return isValid;
+}
+
 </script>
 
-<!--  ----------------------------------------------------------------------  -->
-<!--  NOTE: Please add the following <FORM> element to your page.             -->
-<!--  ----------------------------------------------------------------------  -->
-
-<form action="https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&orgId=00Dg800000GVUzt" method="POST">
-
-<input type=hidden name='captcha_settings' value='{"keyname":"webLead","fallback":"true","orgId":"00Dg800000GVUzt","ts":""}'>
-<input type=hidden name="oid" value="00Dg800000GVUzt">
-<input type=hidden name="retURL" value="http://www.google.com">
-
-<!--  ----------------------------------------------------------------------  -->
-<!--  NOTE: These fields are optional debugging elements. Please uncomment    -->
-<!--  these lines if you wish to test in debug mode.                          -->
-<!--  <input type="hidden" name="debug" value=1>                              -->
-<!--  <input type="hidden" name="debugEmail"                                  -->
-<!--  value="santoshkrofc@gmail.com">                                         -->
-<!--  ----------------------------------------------------------------------  -->
-
-<label for="first_name">First Name</label><input  id="first_name" maxlength="40" name="first_name" size="20" type="text" /><br>
-
-<label for="last_name">Last Name</label><input  id="last_name" maxlength="80" name="last_name" size="20" type="text" /><br>
-
-<label for="email">Email</label><input  id="email" maxlength="80" name="email" size="20" type="text" /><br>
-
-<label for="company">Company</label><input  id="company" maxlength="40" name="company" size="20" type="text" /><br>
-
-<label for="city">City</label><input  id="city" maxlength="40" name="city" size="20" type="text" /><br>
-
-<label for="state">State/Province</label><input  id="state" maxlength="20" name="state" size="20" type="text" /><br>
-
-<input type="hidden"  id="lead_source" name="lead_source" value="Web" /><br>
-
-<div class="g-recaptcha" data-sitekey="6LeCzNUtAAAAANdAlINCCSGZ99uTNqlMvA5Ufawk"></div><br>
-<input type="submit" name="submit">
-
-</form>
+</body>
+</html>
+```
